@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Димвиртация</title>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: #4a4a4a;
+            height: 100%;
+        }
+
+        .wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        #f {
+            width: 90%;
+            height: 70%;
+            margin: 0 0 10px;
+            background-color: black;
+            color: #e8e8e8;
+        }
+
+        button {
+            width: 90%;
+            padding: 10px 0;
+        }
+
+        h1 {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>ГОЙДА БРАТЬЯ БЛОКЧЕЙНОВЦЫ</h1>
+        <textarea id="f" onFocus="this.select()"></textarea>
+        <button onclick="oclick(this)">Получить docx</button>
+    </div>
+    <script>
+        function oclick(btn) {
+            btn.setAttribute('disabled', "");
+            const str = document.getElementById('f').value;
+            fetch("/convert/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify({ string: str })
+            })
+                .then(response => {
+                    // Проверяем успешность запроса
+                    if (!response.ok) {
+                        throw new Error('Ошибка загрузки файла');
+                    }
+                    // Возвращаем ответ в виде байтов
+                    return response.blob();
+                })
+                .then(blob => {
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'output.docx'; // Указываем имя файла, которое пользователь увидит при скачивании
+                    link.click();
+
+                    // Освобождаем ресурсы
+                    window.URL.revokeObjectURL(link.href);
+                    btn.removeAttribute('disabled');
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+C:\Projects\blochain-md2\pythonProject\.venv\Scripts\python.exe C:\Projects\blochain-md2\pythonProject\main.py
